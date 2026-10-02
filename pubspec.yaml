@@ -1,0 +1,43 @@
+name: cute_kid_fonts
+description: >-
+  Chubby, embossed, pastel kid typography for Flutter and Flame. Bundled OFL
+  fonts with full Czech diacritics, a layered bubble text effect and named
+  palettes.
+version: 0.1.0
+homepage: https://github.com/lioilsources/CuteKidFonts
+repository: https://github.com/lioilsources/CuteKidFonts
+
+environment:
+  sdk: ^3.8.0
+  flutter: ">=3.32.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flame: ">=1.35.1 <2.0.0"
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  # Variable fonts; weight is set via FontVariation('wght', …) in KidRoleSpec.
+  # Apps reference them through the package prefix
+  # (`packages/cute_kid_fonts/<family>`), which KidFonts does for you.
+  fonts:
+    - family: DynaPuff
+      fonts:
+        - asset: fonts/DynaPuff-Variable.ttf
+    - family: Baloo2
+      fonts:
+        - asset: fonts/Baloo2-Variable.ttf
+    - family: GrandstanderItalic
+      fonts:
+        - asset: fonts/Grandstander-Italic-Variable.ttf
+          style: italic
+    - family: Nunito
+      fonts:
+        - asset: fonts/Nunito-Variable.ttf
+        - asset: fonts/Nunito-Italic-Variable.ttf
+          style: italic
