@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.1
+
+- Fallback chain is now Baloo 2 → Nunito (was Nunito only), so pinyin tone
+  marks (Ǐ ǒ ǚ ǜ…) in DynaPuff roles no longer drop to the system font.
+  Czech/Latin rendering and layout geometry are unchanged (goldens identical).
+
 ## 0.1.0
 
 - First release.

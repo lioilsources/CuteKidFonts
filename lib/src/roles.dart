@@ -17,10 +17,12 @@ abstract final class KidFonts {
   /// True italic display face.
   static const grandstanderItalic = 'packages/$package/GrandstanderItalic';
 
-  /// Fallback for anything the primary faces miss.
+  /// Last-resort fallback face.
   static const nunito = 'packages/$package/Nunito';
 
-  static const fallback = <String>[nunito];
+  /// Fallback chain for every role. Baloo 2 comes first: it covers pinyin
+  /// tone marks (Ǐ ǒ ǚ…) that DynaPuff and Nunito lack.
+  static const fallback = <String>[baloo2, nunito];
 }
 
 /// Typographic roles shared by all apps.

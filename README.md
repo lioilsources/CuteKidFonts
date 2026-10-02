@@ -107,7 +107,8 @@ Future<void> testExecutable(FutureOr<void> Function() testMain) async {
 | `key` | DynaPuff 700, thinner outline (0.10) | 36 | bubble |
 | `number` | Baloo 2 800, tabular figures | 32 | flat |
 
-Fallback for every role: Nunito (regular + italic).
+Fallback for every role: Baloo 2, then Nunito — Baloo 2 covers pinyin tone
+marks (Ǐ ǒ ǚ…) that DynaPuff lacks.
 
 ![Every role](example/screenshots/roles_light.png)
 
