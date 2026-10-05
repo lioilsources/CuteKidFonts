@@ -1,4 +1,4 @@
-import 'package:cute_kid_fonts/cute_kid_fonts_flame.dart';
+import 'package:cute_kid_fonts_flame/cute_kid_fonts_flame.dart';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';

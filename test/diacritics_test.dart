@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:cute_kid_fonts/cute_kid_fonts.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'cmap.dart';
+import '../tool/cmap.dart';
 
 /// Acceptance test from the plan: a face missing any glyph of
 /// [kidDiacriticsSample] is rejected (it would silently fall back).

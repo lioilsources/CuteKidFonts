@@ -11,8 +11,12 @@ so every kids' app shares the same look.
 - **Five named palettes** — apps never hard-code hex.
 - **Roles** instead of ad-hoc styles: `title`, `titleItalic`, `upper`, `lower`,
   `body`, `dialog`, `key`, `number`.
-- **Flame**: `KidTextPaint` for dynamic text, `KidBubbleComponent` /
-  `rasterizeBubble()` for static sprites with an LRU cache.
+- **Material**: `KidTextTheme.apply(textTheme)` puts the whole app on the kid faces.
+- **One face per string**: `KidFonts.familyFor(text)` picks the first face that
+  covers the whole text (Vietnamese → Baloo 2, Cyrillic → Nunito, Greek → system).
+- **Flame-free core.** Games add the separate `cute_kid_fonts_flame` package:
+  `KidTextPaint` for dynamic text, `KidBubbleComponent` for static sprites.
+  `rasterizeBubble()` / `KidRasterCache` live in the core.
 
 ## Install
 
@@ -21,7 +25,22 @@ dependencies:
   cute_kid_fonts:
     git:
       url: https://github.com/lioilsources/CuteKidFonts.git
-      ref: v0.1.0
+      ref: v0.2.0
+```
+
+Flame games depend on the Flame package **instead** — it re-exports the core
+(`cute_kid_fonts_flame.dart`) and the test helper
+(`cute_kid_fonts_flame_testing.dart`). Don't list `cute_kid_fonts` as well: pub
+resolves the Flame package's in-repo core to a commit, and a second entry pinned
+to the tag conflicts with it.
+
+```yaml
+dependencies:
+  cute_kid_fonts_flame:
+    git:
+      url: https://github.com/lioilsources/CuteKidFonts.git
+      ref: v0.2.0
+      path: packages/cute_kid_fonts_flame
 ```
 
 While developing next to the package, override with a path:
@@ -46,7 +65,41 @@ KidKeyLabel('Ž', size: 36);                             // square box, centred
 KidKeyLabel.fit('CH', keyHeight: 64);                   // font = 0.55 × key height
 
 Text('Pojď si hrát', style: KidTheme.of(context).style(KidRole.body));
+Text(word, style: KidTheme.of(context).style(KidRole.body, forText: word)); // one face per string
 ```
+
+### Material apps
+
+```dart
+final base = ThemeData(colorSchemeSeed: Colors.teal);
+MaterialApp(theme: base.copyWith(textTheme: KidTextTheme.apply(base.textTheme)));
+```
+
+display / headline / title → DynaPuff 700 (flat), body → Baloo 2 400,
+label → Baloo 2 600. Sizes, colours, heights and spacing of the base theme are
+kept.
+
+### Other scripts
+
+A string is never split across faces in `BubbleText`, `KidBubblePainter` or
+`style(…, forText:)` — the first face of `[role face, Baloo 2, Nunito]` that
+covers the whole text is used:
+
+| Script | Title roles | Body roles |
+|---|---|---|
+| Latin incl. cs pl sk ro tr hr sl da nb sv de fr es pt it nl id | DynaPuff | Baloo 2 |
+| Vietnamese, pinyin | Baloo 2 | Baloo 2 |
+| Devanagari (Hindi) | Baloo 2 | Baloo 2 |
+| Cyrillic (ru uk bg sr) | Nunito | Nunito |
+| Greek, Hebrew, Arabic, CJK | — (`familyFor` → `null`, use the system font) | — |
+
+```dart
+final family = KidFonts.familyFor(text, role: KidRole.title); // String? 
+KidFonts.covers(KidFonts.dynaPuff, text);                     // bool
+```
+
+Coverage comes from `lib/src/coverage.g.dart`, generated from the font files
+by `dart run tool/gen_coverage.dart`; a test fails when it is stale.
 
 Optional app-wide defaults:
 
@@ -69,7 +122,7 @@ KidTheme(
 ### Flame
 
 ```dart
-import 'package:cute_kid_fonts/cute_kid_fonts_flame.dart';
+import 'package:cute_kid_fonts_flame/cute_kid_fonts_flame.dart';
 
 // Static text — rasterised once, cached, shown as a sprite.
 add(KidBubbleComponent(text: 'game over', role: KidRole.upper, palette: KidPalette.peach));
@@ -77,7 +130,7 @@ add(KidBubbleComponent(text: 'game over', role: KidRole.upper, palette: KidPalet
 // Dynamic text (score, timer) — plain TextPaint, face colour + extrusion shadow.
 TextComponent(text: '0420', textRenderer: KidTextPaint.of(KidRole.number, KidPalette.lemon));
 
-// Or raw: an image to draw yourself.
+// Or raw (core package, no Flame needed): an image to draw yourself.
 final raster = await KidRasterCache.instance.get('Hotovo!', palette: KidPalette.mint);
 ```
 

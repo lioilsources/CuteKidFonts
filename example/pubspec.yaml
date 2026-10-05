@@ -36,6 +36,8 @@ dependencies:
   cupertino_icons: ^1.0.8
   cute_kid_fonts:
     path: ..
+  cute_kid_fonts_flame:
+    path: ../packages/cute_kid_fonts_flame
   flame: ^1.38.2
 
 dev_dependencies:

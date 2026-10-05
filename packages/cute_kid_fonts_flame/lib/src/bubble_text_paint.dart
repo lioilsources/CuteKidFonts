@@ -3,9 +3,7 @@ import 'dart:async';
 import 'package:flame/components.dart';
 import 'package:flutter/painting.dart';
 
-import '../palette.dart';
-import '../roles.dart';
-import 'rasterize.dart';
+import 'package:cute_kid_fonts/cute_kid_fonts.dart';
 
 /// Flame [TextPaint] factory for dynamic text (score, timer…).
 ///

@@ -52,8 +52,10 @@ class KidThemeData {
   double sizeOf(KidRole role, [double? size]) => size ?? role.spec.size * sizeScale;
 
   /// Plain [TextStyle] for `Text()` — no bubble effect, [flatColor].
-  TextStyle style(KidRole role, {KidPalette? palette, double? size, Color? color}) =>
-      role.style(size: sizeOf(role, size), color: color ?? flatColor(palette ?? this.palette));
+  ///
+  /// Pass [forText] to pick the face that covers the whole string.
+  TextStyle style(KidRole role, {KidPalette? palette, double? size, Color? color, String? forText}) => role
+      .style(size: sizeOf(role, size), color: color ?? flatColor(palette ?? this.palette), forText: forText);
 
   KidThemeData copyWith({
     KidPalette? palette,

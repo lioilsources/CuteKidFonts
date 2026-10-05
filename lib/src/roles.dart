@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:flutter/painting.dart';
 
+import 'coverage.g.dart';
 import 'palette.dart';
 
 /// Font family names, already prefixed for use from any app that depends on
@@ -23,7 +24,61 @@ abstract final class KidFonts {
   /// Fallback chain for every role. Baloo 2 comes first: it covers pinyin
   /// tone marks (Ǐ ǒ ǚ…) that DynaPuff and Nunito lack.
   static const fallback = <String>[baloo2, nunito];
+
+  /// Whether [family] (one of the constants above) has a glyph for every
+  /// script character of [text]. Whitespace, joiners, variation selectors
+  /// and emoji are ignored — no bundled face draws those.
+  static bool covers(String family, String text) {
+    final ranges = kidCoverageRanges[family.substring(family.lastIndexOf('/') + 1)];
+    if (ranges == null) return false;
+    for (final c in text.runes) {
+      if (!_isNeutral(c) && !_inRanges(ranges, c)) return false;
+    }
+    return true;
+  }
+
+  /// The first family of [role]'s face followed by [fallback] that covers
+  /// the whole [text], so a string is never split across faces. Returns null
+  /// when none does (Greek, Hebrew, Arabic, CJK…) — use the system font then.
+  static String? familyFor(String text, {KidRole role = KidRole.body}) =>
+      firstCovering(text, role.spec.family);
+
+  /// Like [familyFor] for an explicit primary family.
+  static String? firstCovering(String text, String primary) {
+    if (covers(primary, text)) return primary;
+    for (final f in fallback) {
+      if (f != primary && covers(f, text)) return f;
+    }
+    return null;
+  }
 }
+
+bool _inRanges(List<int> ranges, int c) {
+  var lo = 0, hi = ranges.length ~/ 2 - 1;
+  while (lo <= hi) {
+    final mid = (lo + hi) >> 1;
+    if (c < ranges[mid * 2]) {
+      hi = mid - 1;
+    } else if (c > ranges[mid * 2 + 1]) {
+      lo = mid + 1;
+    } else {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool _isNeutral(int c) =>
+    c <= 0x20 ||
+    c == 0xA0 ||
+    (c >= 0x2000 && c <= 0x200F) || // spaces, ZWJ/ZWNJ, direction marks
+    (c >= 0x2028 && c <= 0x202F) ||
+    (c >= 0x205F && c <= 0x206F) ||
+    c == 0x3000 ||
+    (c >= 0x2600 && c <= 0x27BF) || // misc symbols, dingbats
+    (c >= 0x2B00 && c <= 0x2BFF) ||
+    (c >= 0xFE00 && c <= 0xFE0F) || // variation selectors
+    c >= 0x1F000; // emoji & co.
 
 /// Typographic roles shared by all apps.
 enum KidRole { title, titleItalic, upper, lower, body, dialog, key, number }
@@ -82,13 +137,17 @@ class KidRoleSpec {
   };
 
   /// Plain [TextStyle] for this role (no paint/colour set unless given).
-  TextStyle textStyle({double? size, Color? color, Paint? foreground}) {
+  ///
+  /// With [forText], the family is the first one of this role's face and
+  /// [KidFonts.fallback] that covers the whole text (see
+  /// [KidFonts.firstCovering]), so the string never mixes faces.
+  TextStyle textStyle({double? size, Color? color, Paint? foreground, String? forText}) {
     final s = size ?? this.size;
     return TextStyle(
-      fontFamily: family,
+      fontFamily: forText == null ? family : (KidFonts.firstCovering(forText, family) ?? family),
       fontFamilyFallback: KidFonts.fallback,
       fontSize: s,
-      fontWeight: _nearestWeight(weight),
+      fontWeight: kidFontWeight(weight),
       fontVariations: [FontVariation.weight(weight)],
       fontStyle: italic ? FontStyle.italic : FontStyle.normal,
       letterSpacing: letterSpacing * s / this.size,
@@ -100,7 +159,8 @@ class KidRoleSpec {
   }
 }
 
-FontWeight _nearestWeight(double w) {
+/// Nearest [FontWeight] for a variable-font weight (internal, not exported).
+FontWeight kidFontWeight(double w) {
   final i = ((w / 100).round() - 1).clamp(0, 8);
   return FontWeight.values[i];
 }
@@ -166,6 +226,6 @@ extension KidRoleX on KidRole {
   };
 
   /// Plain [TextStyle] in the palette's dark colour, e.g. for `Text()`.
-  TextStyle style({KidPalette palette = KidPalette.sky, double? size, Color? color}) =>
-      spec.textStyle(size: size, color: color ?? palette.dark);
+  TextStyle style({KidPalette palette = KidPalette.sky, double? size, Color? color, String? forText}) =>
+      spec.textStyle(size: size, color: color ?? palette.dark, forText: forText);
 }

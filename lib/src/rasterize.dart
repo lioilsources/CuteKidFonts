@@ -2,9 +2,9 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/painting.dart';
 
-import '../bubble_painter.dart';
-import '../palette.dart';
-import '../roles.dart';
+import 'bubble_painter.dart';
+import 'palette.dart';
+import 'roles.dart';
 
 /// A rasterised bubble text: the image is `pixelRatio`× the logical [size].
 class KidRasterText {

@@ -110,6 +110,10 @@ class KidBubblePainter {
 
   bool get isFlat => _flat ?? spec.flat;
 
+  /// Face actually used: the role's, or the first fallback that covers the
+  /// whole text (see [KidFonts.firstCovering]).
+  String get fontFamily => KidFonts.firstCovering(spec.apply(_text), spec.family) ?? spec.family;
+
   /// Effective (scaled) font size.
   double get fontSize => _textScaler.scale(_size ?? spec.size);
 
@@ -139,10 +143,12 @@ class KidBubblePainter {
 
   TextPainter _painter(Paint? foreground, {Color? color}) {
     // Sizes are pre-scaled, so painters themselves never scale again.
+    final text = spec.apply(_text);
     return TextPainter(
       text: TextSpan(
-        text: spec.apply(_text),
-        style: spec.textStyle(size: fontSize, color: color, foreground: foreground),
+        text: text,
+        // One face for the whole string (e.g. Vietnamese title → Baloo 2).
+        style: spec.textStyle(size: fontSize, color: color, foreground: foreground, forText: text),
       ),
       textAlign: _align,
       textDirection: _textDirection,

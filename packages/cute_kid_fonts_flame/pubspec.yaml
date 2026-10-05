@@ -1,0 +1,24 @@
+name: cute_kid_fonts_flame
+description: Flame components for cute_kid_fonts — bubble-text sprites and TextPaint for kid games.
+version: 0.2.0
+homepage: https://github.com/lioilsources/CuteKidFonts
+repository: https://github.com/lioilsources/CuteKidFonts
+publish_to: none # depends on the core package by path (same repo)
+
+environment:
+  sdk: ^3.8.0
+  flutter: ">=3.32.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flame: ">=1.35.1 <2.0.0"
+  # Same repo: resolves inside a git checkout too
+  # (git: {url: …, ref: …, path: packages/cute_kid_fonts_flame}).
+  cute_kid_fonts:
+    path: ../..
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
