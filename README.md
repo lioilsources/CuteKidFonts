@@ -25,7 +25,7 @@ dependencies:
   cute_kid_fonts:
     git:
       url: https://github.com/lioilsources/CuteKidFonts.git
-      ref: v0.2.0
+      ref: v0.2.1
 ```
 
 Flame games depend on the Flame package **instead** — it re-exports the core
@@ -39,7 +39,7 @@ dependencies:
   cute_kid_fonts_flame:
     git:
       url: https://github.com/lioilsources/CuteKidFonts.git
-      ref: v0.2.0
+      ref: v0.2.1
       path: packages/cute_kid_fonts_flame
 ```
 

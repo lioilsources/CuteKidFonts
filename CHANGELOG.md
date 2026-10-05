@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.1
+
+- Fix: `KidTextTheme.apply` no longer sets `fontVariations`. They were inherited
+  by `merge`/`copyWith` and overrode any descendant `fontWeight`, so
+  `TextStyle(fontWeight: FontWeight.bold)` rendered regular. `fontWeight` alone
+  drives the variable fonts' `wght` axis (verified on Flutter 3.44.4; a test
+  fails on engines where it doesn't). Role styles used by `BubbleText` keep the
+  explicit variation. Reported by the Lexify session.
+
 ## 0.2.0
 
 **Breaking:** Flame moved out of the core package.

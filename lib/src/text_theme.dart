@@ -40,7 +40,9 @@ abstract final class KidTextTheme {
   static TextStyle? _face(TextStyle? s, String family, double weight) => s?.copyWith(
     fontFamily: family,
     fontFamilyFallback: KidFonts.fallback,
+    // fontWeight alone drives the variable fonts' wght axis. No
+    // fontVariations here: they are inherited by merge/copyWith and would
+    // override any descendant fontWeight (bold would render regular).
     fontWeight: kidFontWeight(weight),
-    fontVariations: [FontVariation.weight(weight)],
   );
 }
